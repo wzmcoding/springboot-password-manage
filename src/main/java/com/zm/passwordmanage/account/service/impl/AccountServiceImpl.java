@@ -43,4 +43,40 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         }
         return list;
     }
+
+    @Override
+    public void update(Account account) throws Exception {
+        if (account.getId() == null) {
+            throw new RuntimeException("ID不能为空");
+        }
+
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", account.getId())
+                    .eq("user_id", account.getUserId());
+
+        Account existingAccount = baseMapper.selectOne(queryWrapper);
+        if (existingAccount == null) {
+            throw new RuntimeException("账号不存在或不属于当前用户");
+        }
+
+        // 🔥 重新加密
+        account.setPassword(aesUtil.encrypt(account.getPassword()));
+
+        baseMapper.updateById(account);
+    }
+
+    @Override
+    public void delete(Long id, Long userId) {
+
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id)
+                    .eq("user_id", userId);
+
+        Account existingAccount = baseMapper.selectOne(queryWrapper);
+        if (existingAccount == null) {
+            throw new RuntimeException("账号不存在或不属于当前用户");
+        }
+
+        baseMapper.deleteById(id);
+    }
 }
