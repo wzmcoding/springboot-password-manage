@@ -17,6 +17,6 @@ mybatis-plus:
       logic-not-delete-value: 0
 
 vault:
-  jwt-secret: my-secret-key-123456
+  jwt-secret: u8Hk29skf83kdkd83kdks92kskdkd83kdkdkd83kdk=
   jwt-expire: 3600000
-  aes-key: 1234567890123456
+  aes-key: a9skD82kls92KslD
