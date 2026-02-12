@@ -1,6 +1,8 @@
 package com.zm.passwordmanage.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +28,17 @@ public class JwtUtil {
     }
 
     public Long parseToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return Long.parseLong(claims.getSubject());
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(secret.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return Long.parseLong(claims.getSubject());
+        } catch (ExpiredJwtException e){
+            throw new RuntimeException("TOKEN_EXPIRED");
+        } catch (JwtException e) {
+            throw new RuntimeException("TOKEN_INVALID");
+        }
     }
 }
